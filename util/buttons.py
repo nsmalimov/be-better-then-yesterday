@@ -5,14 +5,14 @@ button_commands = [
 ]
 
 buttons = [
-    {
-        "title": ButtonType.GOOD.value,
-        "hide": True
-    },
-    {
-        "title": ButtonType.BAD.value,
-        "hide": True
-    },
+    # {
+    #     "title": ButtonType.GOOD.value,
+    #     "hide": True
+    # },
+    # {
+    #     "title": ButtonType.BAD.value,
+    #     "hide": True
+    # },
     {
         "title": ButtonType.QUOTE.value,
         "hide": True
