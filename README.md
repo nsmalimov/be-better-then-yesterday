@@ -22,3 +22,5 @@ https://freesoft.dev/program/136068159
 https://github.com/azzzak/alice-nearby
 
 docker build -t be-better .
+
+docker run -p 8080:8080 -it --name be-better be-better
