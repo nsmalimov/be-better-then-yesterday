@@ -36,9 +36,11 @@ async def main_handler(request):
             response = handle_greeting()
         else:
             # дать инфу по прошлым ответам (хорошее, плохое, посчитать)
-            response = await handler_common_request(user_id, request.app.db)
+            # response = await handler_common_request(user_id, request.app.db)
+            response = handle_greeting()
     else:
-        response = await handler_common_request(user_id, request.app.db)
+        # response = await handler_common_request(user_id, request.app.db)
+        response = handle_greeting()
 
     response["session"] = {
         "session_id": session_id,
