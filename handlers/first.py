@@ -1,5 +1,6 @@
 from util.buttons import buttons
 
+
 def handle_first_request():
     response = {
         "response": {
@@ -16,6 +17,7 @@ def handle_first_request():
     }
 
     return response
+
 
 def handle_greeting():
     response = {

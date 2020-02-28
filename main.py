@@ -6,6 +6,8 @@ from handlers.common import handler_common_request
 from handlers.button_press import handle_button_press
 from db.init import connect
 from db.models import User
+from util.buttons import button_commands
+
 
 # todo tts
 
@@ -25,11 +27,11 @@ async def main_handler(request):
 
     user = await request.app.db.get_user_from_db(user_id)
 
-    print (json_text["request"])
+    command = json_text["request"]["command"]
 
-    if "payload" in json_text["request"]:
-        payload = json_text["payload"]
-        response = await handle_button_press(payload, request.app.db)
+    # good, bad, quote, end
+    if command in button_commands:
+        response = await handle_button_press(command, request.app.db)
     elif json_text["session"]["new"]:
         if user is None:
             user = User()
@@ -44,18 +46,20 @@ async def main_handler(request):
         response = await handler_common_request(user_id, request.app.db)
 
     response["session"] = {
-            "session_id": session_id,
-            "message_id": message_id,
-            "user_id": user_id
-        }
+        "session_id": session_id,
+        "message_id": message_id,
+        "user_id": user_id
+    }
     response["version"] = version
 
     response = json.dumps(response)
 
     return web.Response(text=response)
 
+
 async def on_shutdown(app):
     await app.db.close()
+
 
 async def init_app():
     app = web.Application()
@@ -77,6 +81,7 @@ async def init_app():
     app.on_shutdown.append(on_shutdown)
 
     return app
+
 
 if __name__ == '__main__':
     web.run_app(init_app())

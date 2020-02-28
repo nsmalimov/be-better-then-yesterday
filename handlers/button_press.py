@@ -1,13 +1,14 @@
 from db.models import ButtonType
 from util.buttons import buttons
 
-def handle_button_press(command, db):
-    if command.type == ButtonType.QUOTE:
-        quote = db.get_random_quote()
+
+async def handle_button_press(command, db):
+    if command == ButtonType.QUOTE.value:
+        quote = await db.get_random_quote()
 
         text = "К сожалению, цитаты закончились :("
 
-        if not(quote is None):
+        if not (quote is None):
             text = quote.text + "\n" + quote.author
 
         response = {
@@ -19,7 +20,15 @@ def handle_button_press(command, db):
         }
 
         return response
-    elif command.type == ButtonType.BAD:
+    elif command == ButtonType.END.value:
+        response = {
+            "response": {
+                "text": "Досвидания! И помни - предела нет.",
+                "end_session": True
+            }
+        }
+        return response
+    elif command == ButtonType.BAD.value:
         return {}
-    elif command.type == ButtonType.GOOD:
-        pass
+    elif command == ButtonType.GOOD.value:
+        return {}

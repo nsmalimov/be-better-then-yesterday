@@ -2,6 +2,7 @@ import asyncio
 from db.init import connect
 from db.models import Quote
 
+
 async def main():
     db = await connect("postgres", "123", "be_better", "79.143.31.238")
 
@@ -17,6 +18,7 @@ async def main():
 
     f.close()
     await db.close()
+
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

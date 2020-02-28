@@ -1,25 +1,24 @@
-import json
+from db.models import ButtonType
+
+button_commands = [
+    ButtonType.GOOD.value, ButtonType.BAD.value, ButtonType.QUOTE.value, ButtonType.END.value,
+]
 
 buttons = [
     {
-        "title": "Сказать, что было хорошо",
-        "payload": json.dumps({
-            "type": "good"
-        }),
+        "title": ButtonType.GOOD.value,
         "hide": True
     },
     {
-        "title": "Сказать, что было плохо",
-        "payload": json.dumps({
-            "type": "bad"
-        }),
+        "title": ButtonType.BAD.value,
         "hide": True
     },
     {
-        "title": "Мотивирующая цитата",
-        "payload": json.dumps({
-            "type": "quote"
-        }),
+        "title": ButtonType.QUOTE.value,
+        "hide": True
+    },
+    {
+        "title": ButtonType.END.value,
         "hide": True
     }
 ]

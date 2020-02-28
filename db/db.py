@@ -30,14 +30,12 @@ class DB:
                     ''', quote.text, quote.author)
 
     async def get_random_quote(self):
-        quote = Quote()
-
-        row = await self.conn.execute('''
-                        SELECT * FROM orders ORDER BY random()
-                    ''', quote.text, quote.author)
+        row = await self.conn.fetchrow('SELECT * FROM quotes ORDER BY random()')
 
         if not (row is None):
-            return Quote().load_by_dict(**row)
+            quote = Quote()
+            quote.load_by_dict(**row)
+            return quote
 
         return None
 
