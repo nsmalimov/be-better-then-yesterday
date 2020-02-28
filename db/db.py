@@ -1,4 +1,4 @@
-from db.models import User
+from db.models import User, Quote, Record
 
 
 class DB:
@@ -10,13 +10,49 @@ class DB:
 
     async def get_user_from_db(self, user_id):
         row = await self.conn.fetchrow(
-            'SELECT * FROM user WHERE id = $1', user_id)
+            'SELECT * FROM users WHERE id = $1', user_id)
 
-        user = User(**row)
+        if not (row is None):
+            user = User()
+            user.load_by_dict(**row)
+            return user
 
-        return user
+        return None
 
     async def set_user_to_db(self, user):
         await self.conn.execute('''
-                INSERT INTO user(id) VALUES($1)
+                INSERT INTO users(id) VALUES($1)
             ''', user.id)
+
+    async def set_quote_to_db(self, quote):
+        await self.conn.execute('''
+                        INSERT INTO quotes(text, author) VALUES($1, $2)
+                    ''', quote.text, quote.author)
+
+    async def get_random_quote(self):
+        quote = Quote()
+
+        row = await self.conn.execute('''
+                        SELECT * FROM orders ORDER BY random()
+                    ''', quote.text, quote.author)
+
+        if not (row is None):
+            return Quote().load_by_dict(**row)
+
+        return None
+
+    async def get_records_by_user_id(self, user_id):
+        records = []
+
+        rows = await self.conn.fetch(
+            'SELECT * FROM records WHERE user_id = $1', user_id)
+
+        if not (rows is None):
+            for row in rows:
+                record = Record()
+                record.load_by_dict(**row)
+                records.append(record)
+
+            return records
+
+        return None

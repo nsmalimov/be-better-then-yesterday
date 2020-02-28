@@ -1,3 +1,5 @@
+from util.buttons import buttons
+
 def handle_first_request():
     response = {
         "response": {
@@ -18,30 +20,11 @@ def handle_first_request():
 def handle_greeting():
     response = {
         "response": {
-            "text": "Приветствую. Рада познакомиться. Моя цель - помочь вам стать сегодня лучше, чем вы были вчера. Выберите команду.",
-            "buttons": [
-                {
-                    "title": "Сказать, что было хорошо",
-                    "payload": {
-                        "type": "good"
-                    },
-                    "hide": True
-                },
-                {
-                    "title": "Сказать, что было плохо",
-                    "payload": {
-                        "type": "bad"
-                    },
-                    "hide": True
-                },
-                {
-                    "title": "Мотивирующая цитата",
-                    "payload": {
-                        "type": "quote"
-                    },
-                    "hide": True
-                }
-            ],
+            "text": "Приветствую. "
+                    "Рада познакомиться."
+                    " Моя цель - помочь вам стать сегодня лучше, чем вы были вчера."
+                    " Расскажите мне, что у вас сегодня было хорошо, а что не очень. А я запишу.",
+            "buttons": buttons,
             "end_session": False
         },
     }

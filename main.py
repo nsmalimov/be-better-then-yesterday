@@ -3,6 +3,7 @@ import json
 import aiohttp_cors
 from handlers.first import handle_first_request, handle_greeting
 from handlers.common import handler_common_request
+from handlers.button_press import handle_button_press
 from db.init import connect
 from db.models import User
 
@@ -17,9 +18,19 @@ async def main_handler(request):
     message_id = json_text["session"]["message_id"]
     user_id = json_text["session"]["user_id"]
 
+    # temp
+    json_text["session"]["new"] = True
+    user_id = "800cd5a2-6005ce4f-d6b7967c-d8f6b886"
+    #
+
     user = await request.app.db.get_user_from_db(user_id)
 
-    if json_text["seesion"]["new"]:
+    print (json_text["request"])
+
+    if "payload" in json_text["request"]:
+        payload = json_text["payload"]
+        response = await handle_button_press(payload, request.app.db)
+    elif json_text["session"]["new"]:
         if user is None:
             user = User()
             user.id = user_id
@@ -27,9 +38,10 @@ async def main_handler(request):
 
             response = handle_greeting()
         else:
-            response = handle_first_request()
+            # дать инфу по прошлым ответам (хорошее, плохое, посчитать)
+            response = await handler_common_request(user_id, request.app.db)
     else:
-        response = handler_common_request()
+        response = await handler_common_request(user_id, request.app.db)
 
     response["session"] = {
             "session_id": session_id,
