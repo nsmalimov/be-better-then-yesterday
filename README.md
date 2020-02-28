@@ -16,3 +16,7 @@ Golang
 https://github.com/toby3d/dialogs/blob/master/models.go
 
 be-better-then-yesterday.ru
+
+https://freesoft.dev/program/136068159
+
+https://github.com/azzzak/alice-nearby
