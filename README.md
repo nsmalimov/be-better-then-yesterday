@@ -20,3 +20,5 @@ be-better-then-yesterday.ru
 https://freesoft.dev/program/136068159
 
 https://github.com/azzzak/alice-nearby
+
+docker build -t be-better .
