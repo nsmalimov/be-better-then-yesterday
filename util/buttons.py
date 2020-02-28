@@ -1,7 +1,12 @@
 from db.models import ButtonType
 
 button_commands = [
-    ButtonType.GOOD.value, ButtonType.BAD.value, ButtonType.QUOTE.value, ButtonType.END.value,
+    ButtonType.GOOD.value,
+    ButtonType.BAD.value,
+    ButtonType.QUOTE.value,
+    ButtonType.END.value,
+    ButtonType.HELP.value,
+    ButtonType.OPPORTUNITIES.value
 ]
 
 buttons = [
