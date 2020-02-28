@@ -6,6 +6,8 @@ class ButtonType(Enum):
     GOOD = "Сказать, что было хорошо"
     BAD = "Сказать, что было плохо"
     END = "Завершить"
+    HELP = "Помощь"
+    OPPORTUNITIES = "Возможности"
 
 
 class User:

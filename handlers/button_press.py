@@ -28,6 +28,28 @@ async def handle_button_press(command, db):
             }
         }
         return response
+    elif command == ButtonType.OPPORTUNITIES.value:
+        text = "Я умею присылать мотивирующие цитаты."
+        response = {
+            "response": {
+                "text": text,
+                "buttons": buttons,
+                "end_session": False
+            },
+        }
+
+        return response
+    elif command == ButtonType.HELP.value:
+        text = "Команда - \"Мотивирующая цитата\" - выдает 1 случайную цитату."
+        response = {
+            "response": {
+                "text": text,
+                "buttons": buttons,
+                "end_session": False
+            },
+        }
+
+        return response
     elif command == ButtonType.BAD.value:
         return {}
     elif command == ButtonType.GOOD.value:

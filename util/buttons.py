@@ -20,5 +20,13 @@ buttons = [
     {
         "title": ButtonType.END.value,
         "hide": True
+    },
+    {
+        "title": ButtonType.HELP.value,
+        "hide": True
+    },
+    {
+        "title": ButtonType.OPPORTUNITIES.value,
+        "hide": True
     }
 ]
