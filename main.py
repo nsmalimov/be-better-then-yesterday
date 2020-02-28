@@ -20,11 +20,6 @@ async def main_handler(request):
     message_id = json_text["session"]["message_id"]
     user_id = json_text["session"]["user_id"]
 
-    # temp
-    json_text["session"]["new"] = True
-    user_id = "800cd5a2-6005ce4f-d6b7967c-d8f6b886"
-    #
-
     user = await request.app.db.get_user_from_db(user_id)
 
     command = json_text["request"]["command"]
