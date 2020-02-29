@@ -64,7 +64,7 @@ class DB:
         records = []
 
         rows = await self.conn.fetch(
-            'SELECT * FROM records WHERE user_id = $1 AND created_at BETWEEN NOW() - INTERVAL "24 HOURS" AND NOW()', user_id)
+            'SELECT * FROM records WHERE user_id = $1 AND created_at BETWEEN NOW() - INTERVAL \'24 HOURS\' AND NOW()', user_id)
 
         if not (rows is None):
             for row in rows:

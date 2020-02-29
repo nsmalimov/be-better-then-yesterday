@@ -25,7 +25,7 @@ async def handler_common_request_with_stats(user_id, db):
     return response
 
 
-async def handler_good_bad_request(user_id, text, status, db, config):
+async def handler_good_bad_request(user_id, text, record_type, db, config):
     mask = str(hash(text))
 
     records = await db.get_records_by_user_id_today(user_id)
@@ -39,18 +39,42 @@ async def handler_good_bad_request(user_id, text, status, db, config):
         else:
             count_good += 1
 
-    if len(records) > config.max_per_day:
-        text = "Вы уже добавили {} ".format(config.max_per_day)
+    if count_good >= config.max_per_day and count_bad >= config.max_per_day:
+        text = "Вы уже добавили {} хорошего и {} плохого. И того и другого сегодня было достаточно. " \
+               "Предлагаю взять паузу и осмыслить сегодняшний день.".format(count_good, count_bad)
+    elif len(records) != 0 and count_bad >= config.max_per_day and record_type == RecordTypes.BAD.value:
+        text = "Вы уже добавили {} плохого. Слишком много добавлять не очень эффективно.".format(config.max_per_day)
+
+        if count_good != config.max_per_day:
+            text += "Может было что-то хорошее?"
+    elif len(records) != 0 and count_good >= config.max_per_day and record_type == RecordTypes.GOOD.value:
+        text = "Вы уже добавили {} хорошего. Слишком много добавлять не очень эффективно.".format(config.max_per_day)
+
+        if count_good != config.max_per_day:
+            text += " Может было что-то плохое? Но я надеюсь, что небыло!"
     else:
-        record = Record(status, text, user_id, mask)
+        record = Record(record_type, text, user_id, mask)
 
         await db.set_record_to_db(record, mask)
 
         await db.set_user_status(user_id, UserStatuses.WAIT.value)
 
+        if record.type == RecordTypes.BAD.value:
+            count_bad += 1
+
+        if record.type == RecordTypes.GOOD.value:
+            count_good += 1
+
         text = "Сохранила. Сегодня вы сообщили о {} случаях хорошего и {} случаях плохого.".format(count_good, count_bad)
 
-        # todo: добавить про то, что > <
+        # больше осознанности в предложения и юмора?
+        if count_good == count_bad:
+            text += "\nПока что и того и другого поровну. Надеюсь, что еще чего-нибудь плохого не происходило и не произойдет."
+        elif count_bad > count_good:
+            text += "\nПлохого сегодня больше. Грустно, но надеюсь, что хорошего будет больше."
+        #  count_bad < count_good:
+        else:
+            text += "\nХорошего больше. Это здорово. Так держать!"
     response = {
         "response": {
             "text": text,
