@@ -4,7 +4,6 @@ import aiohttp_cors
 from handlers.first import handle_greeting
 from handlers.common import handler_common_request_with_stats, handler_good_bad_request, handler_unknown_command
 from handlers.intents import handle_intents
-from handlers.bad_message import handler_bad_request
 from db.init import connect
 from db.models import User, UserStatuses, RecordTypes
 from config.config import Config
