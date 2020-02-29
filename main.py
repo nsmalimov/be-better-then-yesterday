@@ -3,11 +3,10 @@ import json
 import aiohttp_cors
 from handlers.first import handle_greeting
 from handlers.common import handler_common_request_with_stats, handler_good_bad_request, handler_unknown_command
-from handlers.button_press import handle_button_press
+from handlers.intents import handle_intents
 from handlers.bad_message import handler_bad_request
 from db.init import connect
 from db.models import User, UserStatuses, RecordTypes
-from util.buttons import button_commands
 from config.config import Config
 
 
@@ -29,15 +28,16 @@ async def main_handler(request):
 
     user = await request.app.db.get_user_from_db(user_id)
 
-    command = json_text["request"]["command"]
+    text = json_text["request"]["command"]
 
     # bad message
     if "dangerous_context" in json_text["request"]["markup"] and json_text["request"]["markup"]["dangerous_context"]:
         response = handler_bad_request()
     # good, bad, quote, end [help, responsibilities]
-    elif command in button_commands:
-        response = await handle_button_press(user_id, command, request.app.db) \
-            # начал новую сессию
+    elif json_text["request"]["nlu"]["intents"] != {}:
+        intent_key = json_text["request"]["nlu"]["intents"].keys()[0]
+        response = await handle_intents(user_id, intent_key, request.app.db) \
+    # начал новую сессию
     elif json_text["session"]["new"]:
         # юзера вообще в первый раз - приветствуем
         if user is None:
@@ -54,9 +54,9 @@ async def main_handler(request):
     else:
         # сессия не новая, но и не команда из списка [это хорошее и плохое]
         if user.status == UserStatuses.SEND_BAD.value:
-            response = await handler_good_bad_request(user_id, command, RecordTypes.BAD.value, request.app.db, request.app.config)
+            response = await handler_good_bad_request(user_id, text, RecordTypes.BAD.value, request.app.db, request.app.config)
         elif user.status == UserStatuses.SEND_GOOD.value:
-            response = await handler_good_bad_request(user_id, command, RecordTypes.GOOD.value, request.app.db, request.app.config)
+            response = await handler_good_bad_request(user_id, text, RecordTypes.GOOD.value, request.app.db, request.app.config)
         else:
             response = handler_unknown_command()
 

@@ -1,9 +1,23 @@
-from db.models import ButtonType, UserStatuses
-from util.buttons import buttons_all, buttons_wait_reply
+from db.models import UserStatuses
+from enum import Enum
 
 
-async def handle_button_press(user_id, command, db):
-    if command == ButtonType.QUOTE.value:
+class Intents(Enum):
+    QUOTE = "quote"
+    GOOD = "good"
+    BAD = "bad"
+    END = "end"
+    HELP = "help"
+    OPPORTUNITIES = "opportunities"
+    DONT_WANT_TELL = "dont_want"
+
+    STAT_ALL = "stat_all"
+    STAT_DAY = "stat_day"
+    STAT_MONTH = "stat_month"
+
+
+async def handle_intents(user_id, intent_key, db):
+    if intent_key == Intents.QUOTE.value:
         quote = await db.get_random_quote()
 
         text = "К сожалению, цитаты закончились :("
@@ -14,11 +28,10 @@ async def handle_button_press(user_id, command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons_all,
                 "end_session": False
             },
         }
-    elif command == ButtonType.END.value:
+    elif intent_key == Intents.END.value:
         await db.set_user_status(user_id, UserStatuses.WAIT.value)
 
         response = {
@@ -27,16 +40,15 @@ async def handle_button_press(user_id, command, db):
                 "end_session": True
             }
         }
-    elif command == ButtonType.OPPORTUNITIES.value:
+    elif intent_key == Intents.OPPORTUNITIES.value:
         text = "Я умею присылать мотивирующие цитаты."
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons_all,
                 "end_session": False
             },
         }
-    elif command == ButtonType.HELP.value:
+    elif intent_key == Intents.HELP.value:
         text = "Данный навык позволяет получать случайные мотивирующие цитаты по запросу пользователя.\n\n" \
                "Для того, чтобы получить цитату, выберите команду \"Мотивирующая цитата\" - вы можете ввести её нажав соответствующую кнопку или введя" \
                " команду голосом. \n" \
@@ -49,11 +61,10 @@ async def handle_button_press(user_id, command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons_all,
                 "end_session": False
             },
         }
-    elif command == ButtonType.BAD.value:
+    elif intent_key == Intents.BAD.value:
         await db.set_user_status(user_id, UserStatuses.SEND_BAD.value)
 
         text = "Скажите четко и как можно более простыми обещупотребительными словами, " \
@@ -61,11 +72,10 @@ async def handle_button_press(user_id, command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons_wait_reply,
                 "end_session": False
             },
         }
-    elif command == ButtonType.GOOD.value:
+    elif intent_key == Intents.GOOD.value:
         await db.set_user_status(user_id, UserStatuses.SEND_GOOD.value)
 
         text = "Скажите четко и как можно более простыми обещупотребительными словами, что было по вашему мнению " \
@@ -73,11 +83,10 @@ async def handle_button_press(user_id, command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons_wait_reply,
                 "end_session": False
             },
         }
-    # elif command == ButtonType.DONT_WANT_TELL.value:
+    # elif intent_key == Intents.DONT_WANT_TELL.value:
     else:
         await db.set_user_status(user_id, UserStatuses.WAIT.value)
 
@@ -85,7 +94,6 @@ async def handle_button_press(user_id, command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons_all,
                 "end_session": False
             },
         }

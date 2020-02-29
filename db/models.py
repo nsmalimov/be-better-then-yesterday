@@ -12,16 +12,6 @@ class UserStatuses(Enum):
     SEND_BAD = "send_bad"
 
 
-class ButtonType(Enum):
-    QUOTE = "Мотивирующая цитата"
-    GOOD = "Сказать, что было хорошо"
-    BAD = "Сказать, что было плохо"
-    END = "Завершить"
-    HELP = "Помощь"
-    OPPORTUNITIES = "Возможности"
-    DONT_WANT_TELL = "Не хочу рассказывать. Это секрет!"
-
-
 class User:
     def __init__(self, id=None, status=None):
         self.id = id

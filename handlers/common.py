@@ -1,5 +1,4 @@
-from util.buttons import buttons_all
-from db.models import Record, UserStatuses, RecordTypes
+from db.models import Record, RecordTypes
 from db.models import UserStatuses
 
 
@@ -17,7 +16,6 @@ async def handler_common_request_with_stats(user_id, db):
     response = {
         "response": {
             "text": text,
-            "buttons": buttons_all,
             "end_session": False
         },
     }
@@ -65,7 +63,8 @@ async def handler_good_bad_request(user_id, text, record_type, db, config):
         if record.type == RecordTypes.GOOD.value:
             count_good += 1
 
-        text = "Сохранила. Сегодня вы сообщили о {} случаях хорошего и {} случаях плохого.".format(count_good, count_bad)
+        text = "Сохранила. Сегодня вы сообщили о {} случаях хорошего и {} случаях плохого.".format(count_good,
+                                                                                                   count_bad)
 
         # больше осознанности в предложения и юмора?
         if count_good == count_bad:
@@ -78,7 +77,6 @@ async def handler_good_bad_request(user_id, text, record_type, db, config):
     response = {
         "response": {
             "text": text,
-            "buttons": buttons_all,
             "end_session": False
         },
     }
@@ -91,7 +89,6 @@ def handler_unknown_command():
     response = {
         "response": {
             "text": text,
-            "buttons": buttons_all,
             "end_session": False
         },
     }
