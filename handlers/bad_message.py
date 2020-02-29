@@ -1,7 +1,7 @@
 from util.buttons import buttons_all
 
 
-async def handler_bad_request():
+def handler_bad_request():
     text = "Не надо так говорить. Давайте быль культурными."
 
     response = {

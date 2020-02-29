@@ -32,7 +32,7 @@ async def main_handler(request):
     command = json_text["request"]["command"]
 
     # bad message
-    if "dangerous_context" in json_text["request"]["markup"]:
+    if "dangerous_context" in json_text["request"]["markup"] and json_text["request"]["markup"]["dangerous_context"]:
         response = handler_bad_request()
     # good, bad, quote, end [help, responsibilities]
     elif command in button_commands:
