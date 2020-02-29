@@ -48,7 +48,7 @@ async def main_handler(request):
         else:
             # пользователь уже был
             # дать инфу по прошлым ответам (хорошее, плохое, посчитать)
-            response = await handler_common_request_with_stats(user_id, request.app.db)
+            response = await handler_common_request_with_stats(user_id, request.app.db, request.app.config)
     else:
         # сессия не новая, но и не команда из списка [это хорошее и плохое]
         if user.status == UserStatuses.SEND_BAD.value:

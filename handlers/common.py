@@ -11,7 +11,7 @@ def count_days_before_date(date_before):
     return delta.days
 
 
-async def handler_common_request_with_stats(user_id, db):
+async def handler_common_request_with_stats(user_id, db, config):
     records = await db.get_records_by_user_id_all(user_id)
 
     text = "С возвращением. "
@@ -21,7 +21,7 @@ async def handler_common_request_with_stats(user_id, db):
     else:
         count_good, count_bad = count_good_count_bad(records)
 
-        text += "Сегодня вы уже добавили {} хорошего и {} плохого. Произошло ли что-то еще? Если да, то скажи. Если хочешь цитатку, то шепни мне на ушко.".format(
+        text += "Сегодня вы уже добавили {} хорошего и {} плохого.".format(
             count_good, count_bad)
 
     response = {
@@ -69,29 +69,32 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
 
     count_days_before_date_arr = []
 
-    if record_type == RecordTypes.BAD.value:
-        for record in records:
-            if record.text == tokenized_text:
-                count_repeat += 1
+    for record in records:
+        if record.text == tokenized_text:
+            count_repeat += 1
 
-                count_days_before_date_arr.append(count_days_before_date(record.created_at.date()))
+            count_days_before_date_arr.append(count_days_before_date(record.created_at.date()))
 
     if count_repeat != 0:
-        text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. "
+        if record_type == RecordTypes.BAD.value:
+            text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. "
 
-        min_meet = min(count_days_before_date_arr)
+            min_meet = min(count_days_before_date_arr)
 
-        if min_meet != 0 and min_meet != 1:
-            text += "Если быть точным, то {} раз. ".format(count_repeat)
+            if min_meet != 0 and min_meet != 1:
+                text += "Если быть точным, то {} раз. ".format(count_repeat)
+            else:
+                text += "А в последний раз вы ее совершали "
+
+            if min_meet == 0:
+                text += "сегодня ..."
+            elif min_meet == 1:
+                text += "вчера ..."
+            else:
+                text += "{} дней назад.".format(min(count_days_before_date_arr))
         else:
-            text += "А в последний раз вы ее совершали "
-
-        if min_meet == 0:
-            text += "сегодня ..."
-        elif min_meet == 1:
-            text += "вчера ..."
-        else:
-            text += "{} дней назад.".format(min(count_days_before_date_arr))
+            text = "Я могу ошибаться, но кажется у меня в записях уже есть об этом. Может что-то еще хорошего у вас было. " \
+                   "Чтобы не повторяться. Хорошего много не бывает!"
 
         response["response"]["text"] = text
         return response
