@@ -31,7 +31,7 @@ class DB:
 
     async def set_record_to_db(self, record):
         await self.conn.execute('''
-                        INSERT INTO records(type, text, user_id, mask) VALUES($1, $2, $3)
+                        INSERT INTO records(type, text, user_id) VALUES($1, $2, $3)
                     ''', record.type, record.text, record.user_id)
 
     async def set_record_count_to_db(self, id, count):
