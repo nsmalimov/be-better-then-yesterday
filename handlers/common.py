@@ -103,7 +103,7 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
             else:
                 text += "{} дней назад.".format(min(count_days_before_date_arr))
         else:
-            text = "Я могу ошибаться, но кажется у меня в записях уже есть об этом. Может что-то еще хорошего у вас было. " \
+            text = "Я могу ошибаться, но кажется у меня в записях уже есть отметка об этом. Может что-то еще хорошего у вас было? " \
                    "Чтобы не повторяться. Хорошего много не бывает!"
 
         response["response"]["text"] = text
@@ -154,7 +154,7 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
 
 def handler_unknown_command():
     text = "Простите, но я вас не поняла. Повторите, пожалуйста. Если хотите узнать о том, " \
-           "как со мной общаться и какие фразы я понимаю попросите помочь, скажите \"помоги\""
+           "как со мной общаться и какие фразы я понимаю попросите помочь, скажите \"помоги\"."
 
     response = {
         "response": {
