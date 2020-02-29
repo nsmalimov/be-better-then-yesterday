@@ -54,9 +54,9 @@ async def main_handler(request):
     else:
         # сессия не новая, но и не команда из списка [это хорошее и плохое]
         if user.status == UserStatuses.SEND_BAD.value:
-            response = await handler_good_bad_request(user_id, command, RecordTypes.BAD.value, request.app.db, request.config)
+            response = await handler_good_bad_request(user_id, command, RecordTypes.BAD.value, request.app.db, request.app.config)
         elif user.status == UserStatuses.SEND_GOOD.value:
-            response = await handler_good_bad_request(user_id, command, RecordTypes.GOOD.value, request.app.db, request.config)
+            response = await handler_good_bad_request(user_id, command, RecordTypes.GOOD.value, request.app.db, request.app.config)
         else:
             response = handler_unknown_command()
 
