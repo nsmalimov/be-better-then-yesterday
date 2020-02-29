@@ -29,10 +29,15 @@ class DB:
                         INSERT INTO quotes(text, author) VALUES($1, $2)
                     ''', quote.text, quote.author)
 
-    async def set_record_to_db(self, record, mask):
+    async def set_record_to_db(self, record):
         await self.conn.execute('''
-                        INSERT INTO records(type, text, user_id, mask) VALUES($1, $2, $3, $4)
-                    ''', record.type, record.text, record.user_id, mask)
+                        INSERT INTO records(type, text, user_id, mask) VALUES($1, $2, $3)
+                    ''', record.type, record.text, record.user_id)
+
+    async def set_record_count_to_db(self, id, count):
+        await self.conn.execute('''
+                        UPDATE records SET count = $2 WHERE id = $1
+                    ''', id, count)
 
     async def get_random_quote(self):
         row = await self.conn.fetchrow('SELECT * FROM quotes ORDER BY random()')

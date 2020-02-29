@@ -21,6 +21,8 @@ async def main_handler(request):
     message_id = json_text["session"]["message_id"]
     user_id = json_text["session"]["user_id"]
 
+    print (json_text)
+
     # #
     # json_text["session"]["new"] = False
     # user_id = "d866ae29-6eb651f5-a6f881df-55e86c3e"

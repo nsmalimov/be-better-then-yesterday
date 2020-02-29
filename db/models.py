@@ -31,11 +31,12 @@ class Quote:
 
 
 class Record:
-    def __init__(self, type=None, text=None, user_id=None, mask=None):
+    def __init__(self, type=None, text=None, user_id=None, count=None, created_at=None):
         self.type = type
         self.text = text
         self.user_id = user_id
-        self.mask = mask
+        self.count = count
+        self.created_at = created_at
 
     def load_by_dict(self, **entries):
         self.__dict__.update(entries)

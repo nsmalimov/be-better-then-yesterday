@@ -38,10 +38,23 @@ def count_good_count_bad(records):
     return count_good, count_bad
 
 
-async def handler_good_bad_request(user_id, text, record_type, db, config):
-    mask = str(hash(text))
+async def handler_good_bad_request(user_id, tokenized_text, record_type, db, config):
+    response = {
+        "response": {
+            "end_session": False
+        },
+    }
 
     records = await db.get_records_by_user_id_today(user_id)
+
+    if record_type == RecordTypes.BAD.value:
+        for record in records:
+            if record.text == tokenized_text:
+                text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. " \
+                       "А если быть точным, то {}".format(record.created_at)
+
+                response["response"]["text"] = text
+                return response
 
     count_good, count_bad = count_good_count_bad(records)
 
@@ -59,9 +72,9 @@ async def handler_good_bad_request(user_id, text, record_type, db, config):
         if count_good != config.max_per_day:
             text += " Может было что-то плохое? Но я надеюсь, что небыло!"
     else:
-        record = Record(record_type, text, user_id, mask)
+        record = Record(record_type, tokenized_text, user_id)
 
-        await db.set_record_to_db(record, mask)
+        await db.set_record_to_db(record)
 
         await db.set_user_status(user_id, UserStatuses.WAIT.value)
 
@@ -82,12 +95,8 @@ async def handler_good_bad_request(user_id, text, record_type, db, config):
         #  count_bad < count_good:
         else:
             text += "\nХорошего больше. Это здорово. Так держать!"
-    response = {
-        "response": {
-            "text": text,
-            "end_session": False
-        },
-    }
+
+    response["response"]["text"] = text
 
     return response
 
