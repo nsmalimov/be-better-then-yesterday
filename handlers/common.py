@@ -65,7 +65,7 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
             if record.text == tokenized_text:
                 count_repeat += 1
 
-                count_days_before_date_arr.append(count_days_before_date(record.created_at))
+                count_days_before_date_arr.append(count_days_before_date(record.created_at.date()))
 
     if count_repeat != 0:
         text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. " \
