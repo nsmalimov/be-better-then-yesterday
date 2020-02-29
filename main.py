@@ -1,12 +1,12 @@
 from aiohttp import web
 import json
 import aiohttp_cors
-from handlers.first import handle_first_request, handle_greeting
-from handlers.common import handler_common_request
+from handlers.first import handle_greeting
+from handlers.common import handler_common_request_with_stats, handler_good_bad_request, handler_unknown_command
 from handlers.button_press import handle_button_press
 from handlers.bad_message import handler_bad_request
 from db.init import connect
-from db.models import User
+from db.models import User, UserStatuses, RecordTypes
 from util.buttons import button_commands
 from config.config import Config
 
@@ -23,7 +23,7 @@ async def main_handler(request):
     user_id = json_text["session"]["user_id"]
 
     #
-    json_text["session"]["new"] = True
+    json_text["session"]["new"] = False
     user_id = "d866ae29-6eb651f5-a6f881df-55e86c3e"
     #
 
@@ -50,11 +50,15 @@ async def main_handler(request):
         else:
             # пользователь уже был
             # дать инфу по прошлым ответам (хорошее, плохое, посчитать)
-            response = await handler_common_request(user_id, request.app.db)
+            response = await handler_common_request_with_stats(user_id, request.app.db)
     else:
-        # сессия не новая, но и не команда из списка []
-        # response = await handler_common_request(user_id, request.app.db)
-        response = handle_greeting()
+        # сессия не новая, но и не команда из списка [это хорошее и плохое]
+        if user.status == UserStatuses.SEND_BAD.value:
+            response = await handler_good_bad_request(user_id, command, RecordTypes.BAD.value, request.app.db, request.config)
+        elif user.status == UserStatuses.SEND_GOOD.value:
+            response = await handler_good_bad_request(user_id, command, RecordTypes.GOOD.value, request.app.db, request.config)
+        else:
+            response = handler_unknown_command()
 
     response["session"] = {
         "session_id": session_id,
@@ -72,12 +76,11 @@ async def on_shutdown(app):
     await app.db.close()
 
 
-async def init_app():
+async def init_app(config):
     app = web.Application()
 
-    config = Config()
-
     app.db = await connect(config.db_user, config.db_pwd, config.db_name, config.db_host)
+    app.config = config
 
     cors = aiohttp_cors.setup(app)
 
@@ -98,4 +101,6 @@ async def init_app():
 
 
 if __name__ == '__main__':
-    web.run_app(init_app())
+    config = Config()
+
+    web.run_app(init_app(config), port=config.port)

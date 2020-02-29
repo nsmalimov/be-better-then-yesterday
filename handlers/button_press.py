@@ -77,19 +77,11 @@ async def handle_button_press(user_id, command, db):
                 "end_session": False
             },
         }
-    elif command == ButtonType.DONT_WANT_TELL.value:
+    # elif command == ButtonType.DONT_WANT_TELL.value:
+    else:
         await db.set_user_status(user_id, UserStatuses.WAIT.value)
 
         text = "Ну как хотите. Хозяин-барин."
-        response = {
-            "response": {
-                "text": text,
-                "buttons": buttons_all,
-                "end_session": False
-            },
-        }
-    else:
-        text = "Простите, но я вас не поняла. Повторите, пожалуйста."
         response = {
             "response": {
                 "text": text,

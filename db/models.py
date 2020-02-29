@@ -1,6 +1,11 @@
 from enum import Enum
 
 
+class RecordTypes(Enum):
+    GOOD = "good"
+    BAD = "bad"
+
+
 class UserStatuses(Enum):
     WAIT = "wait"
     SEND_GOOD = "send_good"
@@ -18,8 +23,9 @@ class ButtonType(Enum):
 
 
 class User:
-    def __init__(self, id=None):
+    def __init__(self, id=None, status=None):
         self.id = id
+        self.status = status
 
     def load_by_dict(self, **entries):
         self.__dict__.update(entries)
@@ -35,10 +41,11 @@ class Quote:
 
 
 class Record:
-    def __init__(self, type=None, text=None, user_id=None):
+    def __init__(self, type=None, text=None, user_id=None, mask=None):
         self.type = type
         self.text = text
         self.user_id = user_id
+        self.mask = mask
 
     def load_by_dict(self, **entries):
         self.__dict__.update(entries)

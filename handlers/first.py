@@ -1,21 +1,5 @@
 from util.buttons import buttons_all
 
-def handle_first_request():
-    response = {
-        "response": {
-            "text": "Здравствуйте! Это мы, хороводоведы.",
-            "buttons": [
-                {
-                    "title": "Надпись на кнопке",
-                    "payload": {},
-                    "hide": False
-                }
-            ],
-            "end_session": False
-        },
-    }
-
-    return response
 
 def handle_greeting():
     response = {

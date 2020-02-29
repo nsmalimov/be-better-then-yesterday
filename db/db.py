@@ -29,6 +29,11 @@ class DB:
                         INSERT INTO quotes(text, author) VALUES($1, $2)
                     ''', quote.text, quote.author)
 
+    async def set_record_to_db(self, record, mask):
+        await self.conn.execute('''
+                        INSERT INTO records(type, text, user_id, mask) VALUES($1, $2, $3, $4)
+                    ''', record.type, record.text, record.user_id, mask)
+
     async def get_random_quote(self):
         row = await self.conn.fetchrow('SELECT * FROM quotes ORDER BY random()')
 
@@ -39,11 +44,27 @@ class DB:
 
         return None
 
-    async def get_records_by_user_id(self, user_id):
+    async def get_records_by_user_id_all(self, user_id):
         records = []
 
         rows = await self.conn.fetch(
             'SELECT * FROM records WHERE user_id = $1', user_id)
+
+        if not (rows is None):
+            for row in rows:
+                record = Record()
+                record.load_by_dict(**row)
+                records.append(record)
+
+            return records
+
+        return None
+
+    async def get_records_by_user_id_today(self, user_id):
+        records = []
+
+        rows = await self.conn.fetch(
+            'SELECT * FROM records WHERE user_id = $1 AND created_at BETWEEN NOW() - INTERVAL "24 HOURS" AND NOW()', user_id)
 
         if not (rows is None):
             for row in rows:
