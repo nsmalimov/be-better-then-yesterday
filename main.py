@@ -32,7 +32,7 @@ async def main_handler(request):
     text = json_text["request"]["command"]
 
     # good, bad, quote, end [help, responsibilities]
-    if json_text["request"]["nlu"]["intents"] != {}:
+    if "intents" in json_text["request"]["nlu"] and json_text["request"]["nlu"]["intents"] != {}:
         intent_key = list(json_text["request"]["nlu"]["intents"].keys())[0]
         response = await handle_intents(user_id, intent_key, request.app.db) \
     # начал новую сессию
