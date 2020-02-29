@@ -1,5 +1,14 @@
 from db.models import Record, RecordTypes
 from db.models import UserStatuses
+from datetime import date
+
+
+def count_days_before_date(date_before):
+    d1 = date.today()
+    d0 = date_before
+    delta = d1 - d0
+
+    return delta.days
 
 
 async def handler_common_request_with_stats(user_id, db):
@@ -47,14 +56,28 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
 
     records = await db.get_records_by_user_id_today(user_id)
 
+    count_repeat = 0
+
+    count_days_before_date_arr = []
+
     if record_type == RecordTypes.BAD.value:
         for record in records:
             if record.text == tokenized_text:
-                text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. " \
-                       "А если быть точным, то {}".format(record.created_at)
+                count_repeat += 1
 
-                response["response"]["text"] = text
-                return response
+                count_days_before_date_arr.append(count_good_count_bad(record.created_at))
+
+    if count_repeat != 0:
+        text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. " \
+               "А если быть точным, то {} раз, а последний раз вы ее совершали ".format(count_repeat)
+
+        if min(count_days_before_date_arr) == 1:
+            text += "сегодня ..."
+        else:
+            text += "{} дней назад.".format(min(count_days_before_date_arr))
+
+        response["response"]["text"] = text
+        return response
 
     count_good, count_bad = count_good_count_bad(records)
 
