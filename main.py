@@ -35,7 +35,7 @@ async def main_handler(request):
         response = handler_bad_request()
     # good, bad, quote, end [help, responsibilities]
     elif json_text["request"]["nlu"]["intents"] != {}:
-        intent_key = json_text["request"]["nlu"]["intents"].keys()[0]
+        intent_key = list(json_text["request"]["nlu"]["intents"].keys())[0]
         response = await handle_intents(user_id, intent_key, request.app.db) \
     # начал новую сессию
     elif json_text["session"]["new"]:
