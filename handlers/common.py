@@ -55,6 +55,8 @@ def count_good_count_bad(records):
 
 
 async def handler_good_bad_request(user_id, tokenized_text, record_type, db, config):
+    tokenized_text = tokenized_text.lower()
+
     response = {
         "response": {
             "end_session": False
@@ -75,12 +77,18 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
                 count_days_before_date_arr.append(count_days_before_date(record.created_at.date()))
 
     if count_repeat != 0:
-        text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. " \
-               "А если быть точным, то {} раз, а последний раз вы ее совершали ".format(count_repeat)
+        text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. "
 
-        if min(count_days_before_date_arr) == 0:
+        min_meet = min(count_days_before_date_arr)
+
+        if min_meet != 0 and min_meet != 1:
+            text += "Если быть точным, то {} раз. ".format(count_repeat)
+        else:
+            text += "А в последний раз вы ее совершали "
+
+        if min_meet == 0:
             text += "сегодня ..."
-        elif min(count_days_before_date_arr) == 1:
+        elif min_meet == 1:
             text += "вчера ..."
         else:
             text += "{} дней назад.".format(min(count_days_before_date_arr))
