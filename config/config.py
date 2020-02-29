@@ -10,4 +10,4 @@ class Config:
 
         self.max_per_day = 4
 
-        self.port = 8090
+        self.port = 8080
