@@ -1,6 +1,12 @@
 from enum import Enum
 
 
+class UserStatuses(Enum):
+    WAIT = "wait"
+    SEND_GOOD = "send_good"
+    SEND_BAD = "send_bad"
+
+
 class ButtonType(Enum):
     QUOTE = "Мотивирующая цитата"
     GOOD = "Сказать, что было хорошо"
@@ -8,6 +14,7 @@ class ButtonType(Enum):
     END = "Завершить"
     HELP = "Помощь"
     OPPORTUNITIES = "Возможности"
+    DONT_WANT_TELL = "Не хочу рассказывать. Это секрет!"
 
 
 class User:

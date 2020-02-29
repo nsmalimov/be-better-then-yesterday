@@ -1,5 +1,6 @@
-CREATE
-TYPE record_type AS ENUM ('good', 'bad');
+CREATE TYPE record_type AS ENUM ('good', 'bad');
+
+CREATE type user_statuses AS ENUM ('wait', 'send_good', 'send_bad');
 
 CREATE TABLE quotes
 (
@@ -13,6 +14,7 @@ CREATE TABLE quotes
 CREATE TABLE users
 (
     id VARCHAR(255) NOT NULL PRIMARY KEY,
+    status user_statuses NOT NULL DEFAULT 'wait',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

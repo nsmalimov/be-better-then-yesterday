@@ -1,10 +1,12 @@
 import asyncio
 from db.init import connect
 from db.models import Quote
+from config.config import Config
 
 
 async def main():
-    db = await connect("postgres", "123", "be_better", "79.143.31.238")
+    config = Config()
+    db = await connect(config.db_user, config.db_pwd, config.db_name, config.db_host)
 
     f = open("../data/quotes")
 

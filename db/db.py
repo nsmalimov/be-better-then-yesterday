@@ -54,3 +54,6 @@ class DB:
             return records
 
         return None
+
+    async def set_user_status(self, user_id, status):
+        await self.conn.execute('''UPDATE users SET status = $2 WHERE id = $1''', user_id, status)

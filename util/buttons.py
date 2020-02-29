@@ -6,18 +6,19 @@ button_commands = [
     ButtonType.QUOTE.value,
     ButtonType.END.value,
     ButtonType.HELP.value,
-    ButtonType.OPPORTUNITIES.value
+    ButtonType.OPPORTUNITIES.value,
+    ButtonType.DONT_WANT_TELL.value
 ]
 
-buttons = [
-    # {
-    #     "title": ButtonType.GOOD.value,
-    #     "hide": True
-    # },
-    # {
-    #     "title": ButtonType.BAD.value,
-    #     "hide": True
-    # },
+buttons_all = [
+    {
+        "title": ButtonType.GOOD.value,
+        "hide": True
+    },
+    {
+        "title": ButtonType.BAD.value,
+        "hide": True
+    },
     {
         "title": ButtonType.QUOTE.value,
         "hide": True
@@ -26,12 +27,23 @@ buttons = [
         "title": ButtonType.END.value,
         "hide": True
     },
+    # {
+    #     "title": ButtonType.HELP.value,
+    #     "hide": True
+    # },
+    # {
+    #     "title": ButtonType.OPPORTUNITIES.value,
+    #     "hide": True
+    # }
+]
+
+buttons_wait_reply = [
     {
-        "title": ButtonType.HELP.value,
+        "title": ButtonType.DONT_WANT_TELL.value,
         "hide": True
     },
     {
-        "title": ButtonType.OPPORTUNITIES.value,
+        "title": ButtonType.END.value,
         "hide": True
-    }
+    },
 ]

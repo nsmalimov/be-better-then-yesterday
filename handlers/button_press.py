@@ -1,8 +1,8 @@
-from db.models import ButtonType
-from util.buttons import buttons
+from db.models import ButtonType, UserStatuses
+from util.buttons import buttons_all, buttons_wait_reply
 
 
-async def handle_button_press(command, db):
+async def handle_button_press(user_id, command, db):
     if command == ButtonType.QUOTE.value:
         quote = await db.get_random_quote()
 
@@ -14,31 +14,28 @@ async def handle_button_press(command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons,
+                "buttons": buttons_all,
                 "end_session": False
             },
         }
-
-        return response
     elif command == ButtonType.END.value:
+        await db.set_user_status(user_id, UserStatuses.WAIT.value)
+
         response = {
             "response": {
                 "text": "Досвидания! И помни - предела нет.",
                 "end_session": True
             }
         }
-        return response
     elif command == ButtonType.OPPORTUNITIES.value:
         text = "Я умею присылать мотивирующие цитаты."
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons,
+                "buttons": buttons_all,
                 "end_session": False
             },
         }
-
-        return response
     elif command == ButtonType.HELP.value:
         text = "Данный навык позволяет получать случайные мотивирующие цитаты по запросу пользователя.\n\n" \
                "Для того, чтобы получить цитату, выберите команду \"Мотивирующая цитата\" - вы можете ввести её нажав соответствующую кнопку или введя" \
@@ -52,13 +49,53 @@ async def handle_button_press(command, db):
         response = {
             "response": {
                 "text": text,
-                "buttons": buttons,
+                "buttons": buttons_all,
+                "end_session": False
+            },
+        }
+    elif command == ButtonType.BAD.value:
+        await db.set_user_status(user_id, UserStatuses.SEND_BAD.value)
+
+        text = "Скажите четко и как можно более простыми обещупотребительными словами, " \
+               "какую ошибку вы сегодня совершили. А я запишу."
+        response = {
+            "response": {
+                "text": text,
+                "buttons": buttons_wait_reply,
+                "end_session": False
+            },
+        }
+    elif command == ButtonType.GOOD.value:
+        await db.set_user_status(user_id, UserStatuses.SEND_GOOD.value)
+
+        text = "Скажите четко и как можно более простыми обещупотребительными словами, что было по вашему мнению " \
+               "было у вас хорошо. А я запишу."
+        response = {
+            "response": {
+                "text": text,
+                "buttons": buttons_wait_reply,
+                "end_session": False
+            },
+        }
+    elif command == ButtonType.DONT_WANT_TELL.value:
+        await db.set_user_status(user_id, UserStatuses.WAIT.value)
+
+        text = "Ну как хотите. Хозяин-барин."
+        response = {
+            "response": {
+                "text": text,
+                "buttons": buttons_all,
+                "end_session": False
+            },
+        }
+    else:
+        text = "Простите, но я вас не поняла. Повторите, пожалуйста."
+        response = {
+            "response": {
+                "text": text,
+                "buttons": buttons_all,
                 "end_session": False
             },
         }
 
-        return response
-    elif command == ButtonType.BAD.value:
-        return {}
-    elif command == ButtonType.GOOD.value:
-        return {}
+    return response
