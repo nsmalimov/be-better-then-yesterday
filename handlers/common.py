@@ -24,6 +24,14 @@ async def handler_common_request_with_stats(user_id, db, config):
         text += "Сегодня вы уже добавили {} хорошего и {} плохого.".format(
             count_good, count_bad)
 
+        if count_good == config.max_per_day and count_bad == config.max_per_day:
+            text += " Слишком много хорошего и плохого в день добавлять не эффективно, поэтому даже не пытайся добавить " \
+                    "в меня еще ни хорошего ни плохого."
+        else:
+            text += "Произошло ли что-то еще? Если да, то скажи что именно."
+
+        text += " Если хочешь цитатку, то шепни мне на ушко."
+
     response = {
         "response": {
             "text": text,
@@ -55,6 +63,8 @@ def count_good_count_bad(records):
 
 
 async def handler_good_bad_request(user_id, tokenized_text, record_type, db, config):
+    await db.set_user_status(user_id, UserStatuses.WAIT.value)
+
     tokenized_text = tokenized_text.lower()
 
     response = {
@@ -118,8 +128,6 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
         record = Record(record_type, tokenized_text, user_id)
 
         await db.set_record_to_db(record)
-
-        await db.set_user_status(user_id, UserStatuses.WAIT.value)
 
         if record.type == RecordTypes.BAD.value:
             count_bad += 1
