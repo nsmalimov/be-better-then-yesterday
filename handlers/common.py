@@ -10,8 +10,10 @@ async def handler_common_request_with_stats(user_id, db):
     if len(records) == 0:
         text += "Вы пока не рассказывали о своих успехах и неудачах. Расскажите о них, чтобы я могла их записать."
     else:
-        for record in records:
-            text += "dddd"
+        count_good, count_bad = count_good_count_bad(records)
+
+        text += "Сегодня вы уже добавили {} хорошего и {} плохого. Произошло ли что-то еще? Если да, то скажи. Если хочешь цитатку, то шепни мне на ушко.".format(
+            count_good, count_bad)
 
     response = {
         "response": {
@@ -23,11 +25,7 @@ async def handler_common_request_with_stats(user_id, db):
     return response
 
 
-async def handler_good_bad_request(user_id, text, record_type, db, config):
-    mask = str(hash(text))
-
-    records = await db.get_records_by_user_id_today(user_id)
-
+def count_good_count_bad(records):
     count_good = 0
     count_bad = 0
 
@@ -36,6 +34,16 @@ async def handler_good_bad_request(user_id, text, record_type, db, config):
             count_bad += 1
         else:
             count_good += 1
+
+    return count_good, count_bad
+
+
+async def handler_good_bad_request(user_id, text, record_type, db, config):
+    mask = str(hash(text))
+
+    records = await db.get_records_by_user_id_today(user_id)
+
+    count_good, count_bad = count_good_count_bad(records)
 
     if count_good >= config.max_per_day and count_bad >= config.max_per_day:
         text = "Вы уже добавили {} хорошего и {} плохого. И того и другого сегодня было достаточно. " \
@@ -85,7 +93,9 @@ async def handler_good_bad_request(user_id, text, record_type, db, config):
 
 
 def handler_unknown_command():
-    text = "Простите, но я вас не поняла. Повторите, пожалуйста."
+    text = "Простите, но я вас не поняла. Повторите, пожалуйста. Если хотите узнать о том, " \
+           "как со мной общаться и какие фразы я понимаю попросите помочь, скажите \"помоги\""
+
     response = {
         "response": {
             "text": text,
