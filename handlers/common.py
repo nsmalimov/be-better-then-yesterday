@@ -38,11 +38,18 @@ def count_good_count_bad(records):
     count_good = 0
     count_bad = 0
 
+    added_good = {}
+    added_bad = {}
+
     for record in records:
-        if record.type == RecordTypes.BAD.value:
+        if record.type == RecordTypes.BAD.value and not record.text in added_bad:
+            added_bad[record.text] = 1
             count_bad += 1
         else:
-            count_good += 1
+            added_good[record.text] = 1
+
+            if not record.text in added_bad:
+                count_good += 1
 
     return count_good, count_bad
 
@@ -71,8 +78,10 @@ async def handler_good_bad_request(user_id, tokenized_text, record_type, db, con
         text = "Блин, это плохо, я могу ошибаться, но кажется вы уже совершали ранее эту ошибку. " \
                "А если быть точным, то {} раз, а последний раз вы ее совершали ".format(count_repeat)
 
-        if min(count_days_before_date_arr) == 1:
+        if min(count_days_before_date_arr) == 0:
             text += "сегодня ..."
+        elif min(count_days_before_date_arr) == 1:
+            text += "вчера ..."
         else:
             text += "{} дней назад.".format(min(count_days_before_date_arr))
 
