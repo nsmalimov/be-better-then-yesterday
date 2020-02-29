@@ -22,10 +22,10 @@ async def main_handler(request):
     message_id = json_text["session"]["message_id"]
     user_id = json_text["session"]["user_id"]
 
-    #
-    json_text["session"]["new"] = False
-    user_id = "d866ae29-6eb651f5-a6f881df-55e86c3e"
-    #
+    # #
+    # json_text["session"]["new"] = False
+    # user_id = "d866ae29-6eb651f5-a6f881df-55e86c3e"
+    # #
 
     user = await request.app.db.get_user_from_db(user_id)
 
